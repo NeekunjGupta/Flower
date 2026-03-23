@@ -5,157 +5,89 @@
 <title>Blooming Rose</title>
 
 <style>
-
 body{
 margin:0;
-height:100vh;
-display:flex;
-justify-content:center;
-align-items:center;
-flex-direction:column;
-font-family:Arial;
-background:linear-gradient(135deg,#ff9a9e,#fad0c4,#ffd6e7);
 overflow:hidden;
+background:linear-gradient(135deg,#ff9a9e,#fad0c4);
+font-family:sans-serif;
 }
 
-/* ROSE CONTAINER */
-
-.rose{
-position:relative;
-width:160px;
-height:160px;
-}
-
-/* PETALS */
-
-.petal{
+#message{
 position:absolute;
-width:90px;
-height:120px;
-background:radial-gradient(circle at 30% 30%,#ff4d6d,#b3002d);
-border-radius:60% 60% 40% 40%;
-transform-origin:bottom center;
-opacity:0;
-}
-
-/* OUTER PETALS */
-
-.p1{left:35px; animation:open1 1.5s forwards .5s;}
-.p2{left:0px; animation:open2 1.5s forwards 1s;}
-.p3{right:0px; animation:open3 1.5s forwards 1s;}
-
-/* INNER PETALS */
-
-.p4{left:30px; animation:open4 1.5s forwards 1.8s;}
-.p5{left:50px; animation:open5 1.5s forwards 2.3s;}
-
-/* CENTER BUD */
-
-.center{
-position:absolute;
-width:50px;
-height:70px;
-background:radial-gradient(circle,#ff3355,#800020);
-border-radius:60% 60% 40% 40%;
-left:55px;
-top:40px;
-opacity:0;
-animation:centerBloom 1.5s forwards 2.8s;
-}
-
-/* PETAL ANIMATIONS */
-
-@keyframes open1{
-0%{transform:rotate(0) scale(.2);opacity:0;}
-100%{transform:rotate(-40deg) scale(1);opacity:1;}
-}
-
-@keyframes open2{
-0%{transform:rotate(0) scale(.2);opacity:0;}
-100%{transform:rotate(-75deg) scale(1);opacity:1;}
-}
-
-@keyframes open3{
-0%{transform:rotate(0) scale(.2);opacity:0;}
-100%{transform:rotate(75deg) scale(1);opacity:1;}
-}
-
-@keyframes open4{
-0%{transform:scale(.3);opacity:0;}
-100%{transform:rotate(20deg) scale(1);opacity:1;}
-}
-
-@keyframes open5{
-0%{transform:scale(.3);opacity:0;}
-100%{transform:rotate(-15deg) scale(1);opacity:1;}
-}
-
-@keyframes centerBloom{
-0%{transform:scale(.2);opacity:0;}
-100%{transform:scale(1);opacity:1;}
-}
-
-/* MESSAGE */
-
-.message{
-margin-top:40px;
-font-size:24px;
-color:#7a0026;
-opacity:0;
-animation:show 2s forwards;
-animation-delay:4s;
+bottom:15%;
+width:100%;
 text-align:center;
-max-width:70%;
+font-size:28px;
+color:#8b0000;
+opacity:0;
+transition:opacity 2s;
 }
-
-@keyframes show{
-to{opacity:1;}
-}
-
-/* FLOATING HEARTS */
-
-.heart{
-position:absolute;
-font-size:22px;
-animation:float 6s linear infinite;
-opacity:.6;
-}
-
-@keyframes float{
-0%{transform:translateY(100vh) scale(.5);}
-100%{transform:translateY(-10vh) scale(1.3);}
-}
-
 </style>
+
 </head>
 
 <body>
 
-<div class="rose">
-
-<div class="petal p1"></div>
-<div class="petal p2"></div>
-<div class="petal p3"></div>
-<div class="petal p4"></div>
-<div class="petal p5"></div>
-<div class="center"></div>
-
+<div id="message">
+Your message here
 </div>
 
-<div class="message">
-Write your message here
-</div>
+<script src="https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.min.js"></script>
 
 <script>
 
-for(let i=0;i<18;i++){
-let h=document.createElement("div")
-h.className="heart"
-h.innerHTML="❤"
-h.style.left=Math.random()*100+"vw"
-h.style.animationDuration=(4+Math.random()*4)+"s"
-document.body.appendChild(h)
+const scene = new THREE.Scene()
+
+const camera = new THREE.PerspectiveCamera(
+75,
+window.innerWidth/window.innerHeight,
+0.1,
+1000
+)
+
+const renderer = new THREE.WebGLRenderer({antialias:true})
+renderer.setSize(window.innerWidth,window.innerHeight)
+document.body.appendChild(renderer.domElement)
+
+const light = new THREE.PointLight(0xffffff,1)
+light.position.set(5,5,5)
+scene.add(light)
+
+const geometry = new THREE.SphereGeometry(1,32,32)
+const material = new THREE.MeshPhongMaterial({
+color:0xff2a55,
+shininess:100
+})
+
+const rose = new THREE.Mesh(geometry,material)
+scene.add(rose)
+
+camera.position.z = 4
+
+let bloom = 0
+
+function animate(){
+
+requestAnimationFrame(animate)
+
+if(bloom < 1.5){
+rose.scale.x += 0.01
+rose.scale.y += 0.01
+rose.scale.z += 0.01
+bloom += 0.01
 }
+
+rose.rotation.y += 0.01
+
+if(bloom >= 1.5){
+document.getElementById("message").style.opacity = 1
+}
+
+renderer.render(scene,camera)
+
+}
+
+animate()
 
 </script>
 
