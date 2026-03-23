@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -8,31 +9,64 @@
 
 body{
 margin:0;
-overflow:hidden;
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+flex-direction:column;
 background:linear-gradient(135deg,#ff9a9e,#fad0c4,#ffd6e7);
+overflow:hidden;
 font-family:sans-serif;
 }
 
-canvas{
-display:block;
+svg{
+width:220px;
+transform:scale(.4);
+animation:grow 3s forwards;
 }
 
-#message{
-position:absolute;
-bottom:18%;
-width:100%;
-text-align:center;
+@keyframes grow{
+to{transform:scale(1);}
+}
+
+.petal{
+fill:#d81b4e;
+transform-origin:110px 110px;
+opacity:0;
+}
+
+.p1{animation:open1 1.5s forwards .5s;}
+.p2{animation:open2 1.5s forwards 1s;}
+.p3{animation:open3 1.5s forwards 1.5s;}
+.p4{animation:open4 1.5s forwards 2s;}
+.p5{animation:open5 1.5s forwards 2.5s;}
+
+@keyframes open1{to{transform:rotate(-20deg);opacity:1;}}
+@keyframes open2{to{transform:rotate(20deg);opacity:1;}}
+@keyframes open3{to{transform:rotate(-40deg);opacity:1;}}
+@keyframes open4{to{transform:rotate(40deg);opacity:1;}}
+@keyframes open5{to{transform:scale(1.1);opacity:1;}}
+
+.message{
+margin-top:40px;
 font-size:26px;
 color:#7a0026;
 opacity:0;
-transition:opacity 2s;
+animation:show 2s forwards;
+animation-delay:3.5s;
+text-align:center;
+max-width:70%;
+}
+
+@keyframes show{
+to{opacity:1;}
 }
 
 .heart{
 position:absolute;
-font-size:20px;
-opacity:.6;
+font-size:22px;
 animation:float 6s linear infinite;
+opacity:.6;
 }
 
 @keyframes float{
@@ -45,59 +79,21 @@ animation:float 6s linear infinite;
 
 <body>
 
-<canvas id="rose"></canvas>
+<svg viewBox="0 0 220 220">
 
-<div id="message">
+<path class="petal p1" d="M110 110 C130 40 180 60 160 120 C150 160 120 150 110 110"/>
+<path class="petal p2" d="M110 110 C90 40 40 60 60 120 C70 160 100 150 110 110"/>
+<path class="petal p3" d="M110 110 C160 80 180 130 130 160 C110 170 100 140 110 110"/>
+<path class="petal p4" d="M110 110 C60 80 40 130 90 160 C110 170 120 140 110 110"/>
+<path class="petal p5" d="M110 110 C120 70 100 70 110 110"/>
+
+</svg>
+
+<div class="message">
 Write your message here
 </div>
 
 <script>
-
-const canvas = document.getElementById("rose")
-const ctx = canvas.getContext("2d")
-
-canvas.width = window.innerWidth
-canvas.height = window.innerHeight
-
-let t = 0
-
-function draw(){
-
-ctx.clearRect(0,0,canvas.width,canvas.height)
-
-ctx.strokeStyle="#c4002f"
-ctx.lineWidth=2
-
-ctx.beginPath()
-
-for(let theta=0; theta<t; theta+=0.02){
-
-let r = 150*Math.sin(5*theta)
-
-let x = canvas.width/2 + r*Math.cos(theta)
-let y = canvas.height/2 + r*Math.sin(theta)
-
-if(theta===0) ctx.moveTo(x,y)
-else ctx.lineTo(x,y)
-
-}
-
-ctx.stroke()
-
-t+=0.03
-
-if(t<Math.PI*4){
-requestAnimationFrame(draw)
-}
-else{
-document.getElementById("message").style.opacity=1
-}
-
-}
-
-draw()
-
-/* floating hearts */
 
 for(let i=0;i<20;i++){
 let h=document.createElement("div")
