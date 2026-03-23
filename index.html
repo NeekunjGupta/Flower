@@ -5,89 +5,108 @@
 <title>Blooming Rose</title>
 
 <style>
+
 body{
 margin:0;
 overflow:hidden;
-background:linear-gradient(135deg,#ff9a9e,#fad0c4);
+background:linear-gradient(135deg,#ff9a9e,#fad0c4,#ffd6e7);
 font-family:sans-serif;
+}
+
+canvas{
+display:block;
 }
 
 #message{
 position:absolute;
-bottom:15%;
+bottom:18%;
 width:100%;
 text-align:center;
-font-size:28px;
-color:#8b0000;
+font-size:26px;
+color:#7a0026;
 opacity:0;
 transition:opacity 2s;
 }
-</style>
 
+.heart{
+position:absolute;
+font-size:20px;
+opacity:.6;
+animation:float 6s linear infinite;
+}
+
+@keyframes float{
+0%{transform:translateY(100vh) scale(.5);}
+100%{transform:translateY(-10vh) scale(1.2);}
+}
+
+</style>
 </head>
 
 <body>
 
-<div id="message">
-Your message here
-</div>
+<canvas id="rose"></canvas>
 
-<script src="https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.min.js"></script>
+<div id="message">
+Write your message here
+</div>
 
 <script>
 
-const scene = new THREE.Scene()
+const canvas = document.getElementById("rose")
+const ctx = canvas.getContext("2d")
 
-const camera = new THREE.PerspectiveCamera(
-75,
-window.innerWidth/window.innerHeight,
-0.1,
-1000
-)
+canvas.width = window.innerWidth
+canvas.height = window.innerHeight
 
-const renderer = new THREE.WebGLRenderer({antialias:true})
-renderer.setSize(window.innerWidth,window.innerHeight)
-document.body.appendChild(renderer.domElement)
+let t = 0
 
-const light = new THREE.PointLight(0xffffff,1)
-light.position.set(5,5,5)
-scene.add(light)
+function draw(){
 
-const geometry = new THREE.SphereGeometry(1,32,32)
-const material = new THREE.MeshPhongMaterial({
-color:0xff2a55,
-shininess:100
-})
+ctx.clearRect(0,0,canvas.width,canvas.height)
 
-const rose = new THREE.Mesh(geometry,material)
-scene.add(rose)
+ctx.strokeStyle="#c4002f"
+ctx.lineWidth=2
 
-camera.position.z = 4
+ctx.beginPath()
 
-let bloom = 0
+for(let theta=0; theta<t; theta+=0.02){
 
-function animate(){
+let r = 150*Math.sin(5*theta)
 
-requestAnimationFrame(animate)
+let x = canvas.width/2 + r*Math.cos(theta)
+let y = canvas.height/2 + r*Math.sin(theta)
 
-if(bloom < 1.5){
-rose.scale.x += 0.01
-rose.scale.y += 0.01
-rose.scale.z += 0.01
-bloom += 0.01
-}
-
-rose.rotation.y += 0.01
-
-if(bloom >= 1.5){
-document.getElementById("message").style.opacity = 1
-}
-
-renderer.render(scene,camera)
+if(theta===0) ctx.moveTo(x,y)
+else ctx.lineTo(x,y)
 
 }
 
-animate()
+ctx.stroke()
+
+t+=0.03
+
+if(t<Math.PI*4){
+requestAnimationFrame(draw)
+}
+else{
+document.getElementById("message").style.opacity=1
+}
+
+}
+
+draw()
+
+/* floating hearts */
+
+for(let i=0;i<20;i++){
+let h=document.createElement("div")
+h.className="heart"
+h.innerHTML="❤"
+h.style.left=Math.random()*100+"vw"
+h.style.animationDuration=(4+Math.random()*4)+"s"
+document.body.appendChild(h)
+}
 
 </script>
 
